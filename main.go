@@ -67,25 +67,36 @@ func getBoundJumpCloudGroups() []string {
 
 	boundGroups := []string{}
 	for _, appID := range applicationIDs {
-		boundUserGroups, _, err := client.ApplicationsApi.GraphApplicationTraverseUserGroup(
-			ctx, appID, contentType, accept, nil)
-
-		// fmt.Println(boundUserGroups, resp.StatusCode, err)
-
-		if err != nil {
-			panic(fmt.Sprintf("could not get user groups bound to application id: %v", appID))
-		}
-
-		for _, boundUserGroup := range boundUserGroups {
-			group, _, err := client.UserGroupsApi.GroupsUserGet(ctx, boundUserGroup.Id, contentType, accept, nil)
-
-			// fmt.Println(group, resp.StatusCode, err)
+		allBoundUserGroups := []jcapiv2.GraphObjectWithPaths{}
+		var count int32 = 0
+		optionalParams := map[string]interface{}{"skip": count}
+		for {
+			boundUserGroups, _, err := client.ApplicationsApi.GraphApplicationTraverseUserGroup(
+				ctx, appID, contentType, accept, optionalParams)
 
 			if err != nil {
-				panic(fmt.Sprintf("could not get user group name for id: %v", boundUserGroup.Id))
+				panic(fmt.Sprintf(
+					"could not get user groups bound to application id: %s, count: %d, error: %v",
+					appID, count, err))
+			}
+			allBoundUserGroups = append(allBoundUserGroups, boundUserGroups...)
+
+			if len(boundUserGroups) < 100 {
+				break
+			} else {
+				count++
+				optionalParams = map[string]interface{}{"skip": count * 100}
+			}
+		}
+
+		for _, boundUserGroup := range allBoundUserGroups {
+			group, _, err := client.UserGroupsApi.GroupsUserGet(
+				ctx, boundUserGroup.Id, contentType, accept, nil)
+			if err != nil {
+				panic(fmt.Sprintf(
+					"could not get user group name for id: %s: %v", boundUserGroup.Id, err))
 			}
 			boundGroups = append(boundGroups, group.Name)
-			// fmt.Println(group.Name)
 		}
 	}
 
@@ -108,6 +119,13 @@ func getAWSGroups() []string {
 
 	if groups.Groups == nil {
 		panic("no groups returned from AWS: groups is nil")
+	}
+
+	// HACK/TODO: get pagination working for the AWS ListGroups call. Initial attempts proved
+	// unsuccessful.
+	if len(groups.Groups) > 99 {
+		fmt.Println("***WARNING*** More than 99 AWS groups found, results may be incomplete")
+		fmt.Println("Re-run this command after cleaning up AWS groups")
 	}
 
 	groupNames := []string{}
