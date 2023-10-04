@@ -99,7 +99,7 @@ func getBoundJumpCloudGroups() []string {
 			boundGroups = append(boundGroups, group.Name)
 		}
 	}
-
+	fmt.Println("Total # JumpCloud groups bound to AWS:", len(boundGroups))
 	return boundGroups
 }
 
@@ -110,26 +110,37 @@ func getAWSGroups() []string {
 	idStoreSvc := awsidstore.New(session, &aws.Config{Credentials: creds})
 
 	idStoreID := os.Getenv("AWS_ID_STORE_ID")
-	groups, err := idStoreSvc.ListGroups(&awsidstore.ListGroupsInput{IdentityStoreId: &idStoreID})
-	// fmt.Println(awsGroups, err)
+	allAWSGroups := []*awsidstore.Group{}
+	var nextToken *string = nil
+	var maxResults int64 = 100
+	for {
+		input := &awsidstore.ListGroupsInput{
+			IdentityStoreId: &idStoreID,
+			MaxResults:      &maxResults,
+		}
+		if nextToken != nil {
+			input.SetNextToken(*nextToken)
+		}
+		groups, err := idStoreSvc.ListGroups(input)
 
-	if err != nil {
-		panic(fmt.Sprintf("failed to get aws groups: %v", err))
-	}
+		if err != nil {
+			panic(fmt.Sprintf("failed to get aws groups: %v", err))
+		}
+		if groups.Groups == nil {
+			panic("no groups returned from AWS: groups is nil")
+		}
 
-	if groups.Groups == nil {
-		panic("no groups returned from AWS: groups is nil")
-	}
+		allAWSGroups = append(allAWSGroups, groups.Groups...)
+		nextToken = groups.NextToken
 
-	// HACK/TODO: get pagination working for the AWS ListGroups call. Initial attempts proved
-	// unsuccessful.
-	if len(groups.Groups) > 99 {
-		fmt.Println("***WARNING*** More than 99 AWS groups found, results may be incomplete")
-		fmt.Println("Re-run this command after cleaning up AWS groups")
+		if len(groups.Groups) < 100 {
+			break
+		}
 	}
+	fmt.Println("Total # AWS groups:", len(allAWSGroups))
 
 	groupNames := []string{}
-	for _, group := range groups.Groups {
+	for _, group := range allAWSGroups {
 		groupNames = append(groupNames, *group.DisplayName)
 	}
 
