@@ -17,6 +17,7 @@ const maxResults int32 = 100
 // getBoundJumpCloudGroups returns a list of JCUserGroups that are bound to the
 // supplied (aws) application ids. Each JCUserGroup contains the users in the group
 func getBoundJumpCloudGroups() UserGroupCollection {
+	fmt.Println("Collecting JumpCloud groups that are bound to AWS (this may take some time)...")
 	apiKey := os.Getenv("JUMPCLOUD_API_KEY")
 	applicationIDs := strings.Split(os.Getenv("JUMPCLOUD_APPLICATION_IDS"), ",")
 
@@ -32,6 +33,7 @@ func getBoundJumpCloudGroups() UserGroupCollection {
 
 	boundGroups := []UserGroup{}
 	for _, appID := range applicationIDs {
+		fmt.Print(">")
 		allBoundUserGroups := []jcapiv2.GraphObjectWithPaths{}
 		var count int32 = 0
 		optionalParams := map[string]interface{}{"skip": count}
@@ -55,6 +57,7 @@ func getBoundJumpCloudGroups() UserGroupCollection {
 		}
 
 		for _, boundUserGroup := range allBoundUserGroups {
+			fmt.Print(">")
 			group, _, err := clientV2.UserGroupsApi.GroupsUserGet(
 				ctxV2, boundUserGroup.Id, contentType, accept, nil)
 			if err != nil {
@@ -81,7 +84,6 @@ func getBoundJumpCloudGroups() UserGroupCollection {
 			boundGroups = append(boundGroups, UserGroup{Name: group.Name, Users: groupMembers})
 		}
 	}
-	// TODO: improve output to be more informational
-	fmt.Println("Total # JumpCloud groups bound to AWS:", len(boundGroups))
+	fmt.Println("\nDONE: total # JumpCloud groups bound to AWS:", len(boundGroups))
 	return UserGroupCollection{Groups: boundGroups}
 }

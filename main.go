@@ -51,5 +51,4 @@ func main() {
 	awsGroups := getAWSGroups()
 	reconcileAWSGroupsToJCGroups(jumpCloudGroupsBoundToAWS, awsGroups)
 	reconcileJCGroupMembersToAWSGroupMembers(jumpCloudGroupsBoundToAWS, awsGroups)
-	fmt.Print("\n\nDONE\n")
 }

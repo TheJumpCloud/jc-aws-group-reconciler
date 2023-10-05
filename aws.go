@@ -12,7 +12,7 @@ import (
 
 // getAWSGroups returns a list of all of the user groups in the specified AWS region
 func getAWSGroups() UserGroupCollection {
-	// TODO: print warning...could take some time
+	fmt.Println("Collecting AWS groups and members (this may take some time)...")
 	session := awssession.Must(awssession.NewSession())
 	creds := awscreds.NewCredentials(&awscreds.EnvProvider{})
 	idStoreSvc := awsidstore.New(session, &aws.Config{Credentials: creds})
@@ -22,6 +22,7 @@ func getAWSGroups() UserGroupCollection {
 	var nextToken *string = nil
 	var maxResults int64 = 100
 	for {
+		fmt.Print(">")
 		input := &awsidstore.ListGroupsInput{
 			IdentityStoreId: &idStoreID,
 			MaxResults:      &maxResults,
@@ -45,11 +46,10 @@ func getAWSGroups() UserGroupCollection {
 			break
 		}
 	}
-	fmt.Println("Total # AWS groups:", len(allAWSGroups))
 
 	groupNames := []UserGroup{}
 	for _, group := range allAWSGroups {
-		fmt.Print("-")
+		fmt.Print(">")
 		members, err := idStoreSvc.ListGroupMemberships(
 			&awsidstore.ListGroupMembershipsInput{
 				GroupId:         group.GroupId,
@@ -79,6 +79,6 @@ func getAWSGroups() UserGroupCollection {
 				Users: users,
 			})
 	}
-	fmt.Println()
+	fmt.Println("\nDONE: total # AWS groups:", len(allAWSGroups))
 	return UserGroupCollection{Groups: groupNames}
 }
