@@ -1,5 +1,17 @@
 # AWS Group Checker
 
+In Aws Console go to Identity and Access Management (IAM) Dashboard
+You will need to enable access to the `Identity Store` service and the following actions will need to be enabled and attached to the entity calling the script.
+
+```
+ListGroupMemberships
+ListGroups
+ListUsers
+DescribeUser
+```
+
+
+
 Set the following environment variables:
 ```
 	JUMPCLOUD_API_KEY - a jumpcloud api key
