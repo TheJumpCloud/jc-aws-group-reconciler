@@ -1,78 +1,141 @@
-# AWS Group Checker
+# AWS Group Reconciler
 
-This tool compares user groups in JumpCloud to user groups in AWS. It identifies and reconciles
-a couple of things:
-1. Any extra groups in AWS that are not bound to an AWS application in JumpCloud.
-2. Any users that exist in AWS groups that are not a member of the bound JumpCloud group.
+This tool compares user groups in JumpCloud to user groups in AWS Identity Center. It identifies and reconciles:
 
-## Setup
+1. Extra groups in AWS that are not bound to an AWS application in JumpCloud
+2. Users in AWS groups who are not members of the corresponding JumpCloud group
 
-### AWS Permissions and Setup
-Perform the following steps in the AWS console:
+## Quick Start
+
+### 1. Download the Tool
+
+Pre-built binaries are available on the [Releases page](https://github.com/mamatojc/aws-group-reconciler/releases).
+
+```bash
+# Example for macOS arm64 (replace vX.Y.Z with the latest version)
+curl -LO https://github.com/mamatojc/aws-group-reconciler/releases/download/vX.Y.Z/jc-aws-group-reconciler-X.Y.Z-macos-arm64.zip
+unzip jc-aws-group-reconciler-X.Y.Z-macos-arm64.zip
+chmod +x jc-aws-group-reconciler-X.Y.Z-macos-arm64
+```
+
+### 2. Configure Environment Variables
+
+Set the required environment variables:
+
+```bash
+export JUMPCLOUD_API_KEY="your-jumpcloud-api-key"
+export JUMPCLOUD_APPLICATION_IDS="app-id-1,app-id-2"
+export AWS_REGION="your-aws-region"
+export AWS_ACCESS_KEY_ID="your-access-key"
+export AWS_SECRET_ACCESS_KEY="your-secret-key"
+export AWS_ID_STORE_ID="your-id-store-id"
+# Optional: export AWS_SESSION_TOKEN="your-session-token"
+```
+
+### 3. Run the tool
+```bash
+./jc-aws-group-reconciler-X.Y.Z-macos-arm64
+```
+
+## Prerequisites
+
+### JumpCloud Requirements
+
+1. JumpCloud API Key with admin privileges
+2. Application IDs for all AWS applications bound to JumpCloud user groups
+
+### AWS Requirements
+
+#### Required Permissions
+Your AWS credentials need the following permissions:
+
+* ListGroupMemberships
+* ListGroups
+* ListUsers
+* DescribeUser
+
+#### Setup Steps
 1. Go to Identity and Access Management (IAM) Dashboard
-2. Enable access to the `Identity Store` service
-3. Enable and attach the following actions to the entity calling the script:
+2. Enable access to the Identity Store service
+3. Create a policy with the required permissions
+4. Attach the policy to your IAM user/role
+
+#### Required Information
+1. AWS Region (where your Identity Center is configured)
+2. AWS Access Key ID and Secret Access Key
+3. AWS ID Store ID (found in IAM Identity Center settings)
+4. Session Token (only if you're using AWS SSO)
+
+## Usage Guide
+
+### Environment Variables
+
+| Variable                 | Description                                | Required |
+|--------------------------|--------------------------------------------|----------|
+| JUMPCLOUD_API_KEY        | JumpCloud admin API key                    | Yes      |
+| JUMPCLOUD_APPLICATION_IDS| Comma-separated list of JumpCloud application IDs | Yes      |
+| AWS_REGION               | AWS region for Identity Center             | Yes      |
+| AWS_ACCESS_KEY_ID        | AWS access key ID                          | Yes      |
+| AWS_SECRET_ACCESS_KEY    | AWS secret access key                      | Yes      |
+| AWS_ID_STORE_ID          | AWS Identity Store ID                      | Yes      |
+| AWS_SESSION_TOKEN        | AWS session token (for SSO)                | No       |
+
+#### Helper Script
+
+For convenience, you can create a helper script to set environment variables. A sample `run.sh` is provided in the repository.
+
+## Verification
+
+You can verify the integrity of downloaded binaries using the SHA256SUMS.txt file included in each release:
+
+```bash
+sha256sum -c SHA256SUMS.txt
 ```
-ListGroupMemberships
-ListGroups
-ListUsers
-DescribeUser
-```
 
-Additionally, gather the following information for the AWS environment:
-1. Default AWS region (where the groups exist)
-2. The access key for the user used to access AWS
-3. The secret access key for the user used to access AWS
-4. The AWS ID store id. This can be found under the IAM Identity Center setting in AWS
-4. _Optional_ The AWS session token. Use this if your AWS instance uses SSO
+## Building From Source
 
-### JumpCloud Permissions and Setup
-Gather the following information:
-1. The JumpCloud api key for the environment
-2. The application IDs for all AWS applications bound to JumpCloud user groups
+### Prerequisites
+* Go 1.18 or newer
+* Git
 
-## Building the Tool
+### Option 1: Using Make (Recommended)
 
-### Option 1: Building a binary (recommended)
-The project includes a Makefile to simplify the build process:
+```bash
+# Clone the repository
+git clone https://github.com/mamatojc/aws-group-reconciler.git
+cd aws-group-reconciler
 
-1. To build for your current platform:
-
-```
+# Build for your platform
 make build
-```
 
-2. To build for multiple platforms (Windows, macOS, and Linux):
-
-```
+# Build for all platforms
 make build-all
-```
 
-3. To clean up build artifacts:
-
-```
+# Clean build artifacts
 make clean
 ```
 
-### Option 2: Running from source
-Clone this repository and run:
+### Option 2: Using Go Directly
 
-```
+```bash
+# Clone the repository
+git clone https://github.com/mamatojc/aws-group-reconciler.git
+cd aws-group-reconciler
+
+# Run directly
 go run .
+
+# Or build manually
+go build -o jc-aws-group-reconciler .
 ```
 
-### Distributing the binary
-After building the binary for the required platforms using `make build-all`, you can distribute the appropriate binary file to users.
-The binary is standalone and doesn't require Go to be installed on the target machine.
+## For Contributors
 
-## Using the Tool
-Using the information gathered above, set the following environment variables:
-```
-JUMPCLOUD_API_KEY - a jumpcloud api key
-JUMPCLOUD_APPLICATION_IDS - the application ids bound to AWS
-AWS_REGION - the default region for your AWS instance (where the groups exist)
-AWS_ACCESS_KEY_ID - the access key for the user used to access AWS
-AWS_SECRET_ACCESS_KEY - the secret access key for the user used to access AWS
-AWS_ID_STORE_ID - the AWS ID Store id (can be found under the IAM Identity Center settings in AWS)
-(optional) AWS_SESSION_TOKEN - set this if your AWS instance uses SSO to authenticate
-```
+### Releasing New Versions
+
+1. Develop and test your changes
+2. Merge/push changes to the main branch
+3. Check the existing tags to establish the next version
+4. Create and push a tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
+5. GitHub Actions will automatically build binaries and create a release
+6. Binaries can be downloaded from the GitHub Releases page
