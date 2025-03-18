@@ -17,7 +17,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.21'  # Go version used to build binaries
+          go-version: '1.23'  # Go version used to build binaries
 
       - name: Build and package binaries
         run: make release-files
