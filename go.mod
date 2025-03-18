@@ -1,6 +1,8 @@
-module github.com/TheJumpCloud/bitpanda
+module github.com/TheJumpCloud/jc-aws-group-reconciler
 
-go 1.20
+go 1.23.0
+
+toolchain go1.23.2
 
 require (
 	github.com/TheJumpCloud/jcapi-go v3.0.0+incompatible
