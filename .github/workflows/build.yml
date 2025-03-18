@@ -1,0 +1,34 @@
+name: Go Build and Test
+
+# NOTE: Runs on the latest commit on each push to a branch
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.21', '1.22', '1.23']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Verify dependencies
+        run: |
+          go mod verify
+          go mod tidy -check
+
+      - name: Get dependencies
+        run: go mod tidy
+
+      - name: Build with Make
+        run: make build-all
+
+      - name: Test
+        run: go test -v ./... -coverprofile=coverage.out
