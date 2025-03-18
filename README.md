@@ -9,11 +9,11 @@ This tool compares user groups in JumpCloud to user groups in AWS Identity Cente
 
 ### 1. Download the Tool
 
-Pre-built binaries are available on the [Releases page](https://github.com/mamatojc/aws-group-reconciler/releases).
+Pre-built binaries are available on the [Releases page](https://github.com/TheJumpCloud/jc-aws-group-reconciler/releases).
 
 ```bash
 # Example for macOS arm64 (replace vX.Y.Z with the latest version)
-curl -LO https://github.com/mamatojc/aws-group-reconciler/releases/download/vX.Y.Z/jc-aws-group-reconciler-X.Y.Z-macos-arm64.zip
+curl -LO https://github.com/TheJumpCloud/jc-aws-group-reconciler/releases/download/vX.Y.Z/jc-aws-group-reconciler-X.Y.Z-macos-arm64.zip
 unzip jc-aws-group-reconciler-X.Y.Z-macos-arm64.zip
 chmod +x jc-aws-group-reconciler-X.Y.Z-macos-arm64
 ```
@@ -102,8 +102,8 @@ sha256sum -c SHA256SUMS.txt
 
 ```bash
 # Clone the repository
-git clone https://github.com/mamatojc/aws-group-reconciler.git
-cd aws-group-reconciler
+git clone https://github.com/TheJumpCloud/jc-aws-group-reconciler.git
+cd jc-aws-group-reconciler
 
 # Build for your platform
 make build
@@ -119,8 +119,8 @@ make clean
 
 ```bash
 # Clone the repository
-git clone https://github.com/mamatojc/aws-group-reconciler.git
-cd aws-group-reconciler
+git clone https://github.com/TheJumpCloud/jc-aws-group-reconciler.git
+cd jc-aws-group-reconciler
 
 # Run directly
 go run .
