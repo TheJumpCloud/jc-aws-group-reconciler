@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Helper script to run the aws-group-reconciler with environment variables
+# Helper script to run the jc-aws-group-reconciler with environment variables
 
 # Set your environment variables here
 export JUMPCLOUD_API_KEY="your-api-key"
@@ -14,4 +14,4 @@ export AWS_ID_STORE_ID="your-id-store"
 # export AWS_SESSION_TOKEN="your-session-token"
 
 # Run the reconciler
-./aws-group-reconciler
+./jc-aws-group-reconciler
