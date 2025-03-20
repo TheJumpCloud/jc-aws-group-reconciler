@@ -134,8 +134,8 @@ go build -o jc-aws-group-reconciler .
 ### Releasing New Versions
 
 1. Develop and test your changes
-2. Merge/push changes to the main branch
+2. Create a PR and merge changes to the main branch
 3. Check the existing tags to establish the next version
-4. Create and push a tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
-5. GitHub Actions will automatically build binaries and create a release
+4. Run the 'Create Tag' GitHub Actions workflow using the next version as input
+5. The 'Release' GitHub Actions workflow will automatically build binaries and create a release
 6. Binaries can be downloaded from the GitHub Releases page

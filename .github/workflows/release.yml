@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+    contents: write # Required for creating tags
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,4 +35,4 @@ jobs:
           prerelease: false
           generate_release_notes: true
         env:
-          GITHUB_TOKEN: ${{ secrets.TROGDOR_GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
