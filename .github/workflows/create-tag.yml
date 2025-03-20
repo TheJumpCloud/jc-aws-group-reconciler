@@ -23,6 +23,8 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
+                  git config --global user.name "GitHub Actions"
+                  git config --global user.email "actions@github.com"
                   git tag --annotate ${{ github.event.inputs.tag }} -m "Release ${{ github.event.inputs.tag }}"
                   git push origin ${{ github.event.inputs.tag }}
 
