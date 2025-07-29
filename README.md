@@ -25,6 +25,7 @@ Set the required environment variables:
 ```bash
 export JUMPCLOUD_API_KEY="your-jumpcloud-api-key"
 export JUMPCLOUD_APPLICATION_IDS="app-id-1,app-id-2"
+export JUMPCLOUD_ORG_ID="your-org-id"
 export AWS_REGION="your-aws-region"
 export AWS_ACCESS_KEY_ID="your-access-key"
 export AWS_SECRET_ACCESS_KEY="your-secret-key"
@@ -74,6 +75,7 @@ Your AWS credentials need the following permissions:
 |--------------------------|--------------------------------------------|----------|
 | JUMPCLOUD_API_KEY        | JumpCloud admin API key                    | Yes      |
 | JUMPCLOUD_APPLICATION_IDS| Comma-separated list of JumpCloud application IDs | Yes      |
+| JUMPCLOUD_ORG_ID         | ID of JumpCloud Instance                   | No       |
 | AWS_REGION               | AWS region for Identity Center             | Yes      |
 | AWS_ACCESS_KEY_ID        | AWS access key ID                          | Yes      |
 | AWS_SECRET_ACCESS_KEY    | AWS secret access key                      | Yes      |
