@@ -36,7 +36,7 @@ func getBoundJumpCloudGroups() UserGroupCollection {
 		fmt.Print(">")
 		allBoundUserGroups := []jcapiv2.GraphObjectWithPaths{}
 		var count int32 = 0
-		optionalParams := map[string]interface{}{"skip": count}
+		optionalParams := map[string]interface{}{"limit": maxResults, "skip": count * maxResults}
 		for {
 			boundUserGroups, _, err := clientV2.ApplicationsApi.GraphApplicationTraverseUserGroup(
 				ctxV2, appID, contentType, accept, optionalParams)
@@ -50,10 +50,10 @@ func getBoundJumpCloudGroups() UserGroupCollection {
 
 			if len(boundUserGroups) < int(maxResults) {
 				break
-			} else {
-				count++
-				optionalParams = map[string]interface{}{"skip": count * maxResults}
 			}
+
+			count++
+			optionalParams["skip"] = count * maxResults
 		}
 
 		for _, boundUserGroup := range allBoundUserGroups {
