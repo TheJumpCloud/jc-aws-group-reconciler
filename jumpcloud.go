@@ -20,16 +20,25 @@ func getBoundJumpCloudGroups() UserGroupCollection {
 	fmt.Println("Collecting JumpCloud groups that are bound to AWS (this may take some time)...")
 	apiKey := os.Getenv("JUMPCLOUD_API_KEY")
 	applicationIDs := strings.Split(os.Getenv("JUMPCLOUD_APPLICATION_IDS"), ",")
+	org_id := os.Getenv("JUMPCLOUD_ORG_ID")
 
-	clientV2 := jcapiv2.NewAPIClient(jcapiv2.NewConfiguration())
+	cfgv1 := jcapiv1.NewConfiguration()
+	cfgv2 := jcapiv2.NewConfiguration()
+
+	clientV2 := jcapiv2.NewAPIClient(cfgv2)
 	ctxV2 := context.WithValue(context.TODO(), jcapiv2.ContextAPIKey, jcapiv2.APIKey{
 		Key: apiKey,
 	})
 
-	clientV1 := jcapiv1.NewAPIClient(jcapiv1.NewConfiguration())
+	clientV1 := jcapiv1.NewAPIClient(cfgv1)
 	ctxV1 := context.WithValue(context.TODO(), jcapiv1.ContextAPIKey, jcapiv1.APIKey{
 		Key: apiKey,
 	})
+
+	if org_id != "" {
+		cfgv1.AddDefaultHeader("x-org-id", org_id)
+		cfgv2.AddDefaultHeader("x-org-id", org_id)
+	}
 
 	boundGroups := []UserGroup{}
 	for _, appID := range applicationIDs {
