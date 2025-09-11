@@ -1,6 +1,4 @@
 name: Go Build and Test
-permissions:
-  contents: read
 
 # NOTE: Runs on the latest commit on each push to a branch
 on: [push]
