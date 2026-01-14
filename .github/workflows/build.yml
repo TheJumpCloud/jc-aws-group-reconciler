@@ -3,6 +3,12 @@ permissions:
   contents: read
   actions: write
 
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: read
+  actions: write
+
 # NOTE: Runs on the latest commit on each push to a branch
 on: [push]
 
