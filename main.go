@@ -16,6 +16,7 @@ var requiredEnvVars []string = []string{
 
 var optionalEnvVars []string = []string{
 	"AWS_SESSION_TOKEN",
+	"JUMPCLOUD_ORG_ID",
 }
 
 // checkEnvironmentVariables ensures that all the required environment
